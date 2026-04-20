@@ -2,6 +2,8 @@ from flask import Flask, render_template, request
 import pandas as pd
 import pickle
 import os
+import sklearn
+from sklearn.linear_model import LinearRegression
 
 app = Flask(__name__)
 
@@ -19,29 +21,31 @@ def index():
         except FileNotFoundError:
             return "Error: model.pkl not found. Please run train_model.py first."
 
-        # Retrieve input data from the HTML form
-        age = float(request.form['age'])
-        platform = request.form['platform']
-        usage = float(request.form['usage'])
-        sleep = float(request.form['sleep'])
-        
-        # Structure the input exactly like our original features DataFrame
-        input_data = pd.DataFrame(
-            [[age, platform, usage, sleep]], 
-            columns=['Age', 'Most_Used_Platform', 'Avg_Daily_Usage_Hours', 'Sleep_Hours_Per_Night']
-        )
-        
-        # Convert categorical data directly via get_dummies
-        input_encoded = pd.get_dummies(input_data, columns=['Most_Used_Platform'])
-        
-        # Realign the input's dummy columns to match the actual training set's columns.
-        # This handles categories that might be missing in a single prediction.
-        # Unknown platforms/features end up ignored, missing platforms are filled with False/0.
-        input_encoded = input_encoded.reindex(columns=model_columns, fill_value=0)
-        
-        # Make the numerical prediction and extract the resulting value
-        pred_value = model.predict(input_encoded)[0]
-        prediction = round(pred_value, 2)
+        try:
+            # Retrieve input data from the HTML form
+            age = float(request.form['age'])
+            platform = request.form['platform']
+            usage = float(request.form['usage'])
+            sleep = float(request.form['sleep'])
+            
+            # Structure the input exactly like our original features DataFrame
+            input_data = pd.DataFrame(
+                [[age, platform, usage, sleep]], 
+                columns=['Age', 'Most_Used_Platform', 'Avg_Daily_Usage_Hours', 'Sleep_Hours_Per_Night']
+            )
+            
+            # Convert categorical data directly via get_dummies
+            input_encoded = pd.get_dummies(input_data, columns=['Most_Used_Platform'])
+            
+            # Realign the input's dummy columns to match the actual training set's columns.
+            input_encoded = input_encoded.reindex(columns=model_columns, fill_value=0)
+            
+            # Make the numerical prediction and extract the resulting value
+            pred_value = model.predict(input_encoded)[0]
+            prediction = round(pred_value, 2)
+        except Exception as e:
+            import traceback
+            prediction = f"ERROR: {str(e)} | Trace: {traceback.format_exc()}"
         
     return render_template('index.html', prediction=prediction)
 
