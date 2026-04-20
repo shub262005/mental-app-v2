@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Health Prediction Model</title>
+    <!-- Modern font suite from Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base and Reset styling */
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --input-bg: #0f172a;
+            --input-border: #334155;
+            --success-color: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.1);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 20%), 
+                              radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 20%);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Container Card */
+        .card {
+            background-color: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 1.25rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 420px;
+            animation: formReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        @keyframes formReveal {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+            text-align: center;
+            letter-spacing: -0.025em;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        /* Form Components */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--input-border);
+            border-radius: 0.5rem;
+            background-color: var(--input-bg);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Buttons */
+        button {
+            width: 100%;
+            padding: 1rem;
+            background-image: linear-gradient(to right, var(--accent), #818cf8);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-family: inherit;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 1rem;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Results Display */
+        .result-box {
+            margin-top: 2rem;
+            background-color: var(--success-bg);
+            border: 1px solid var(--success-color);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            animation: popIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .result-box h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+            color: var(--success-color);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .result-box .score {
+            margin: 0;
+            font-size: 2.75rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Mental Health Predictor</h1>
+        <div class="subtitle">Enter your details and habits to get a simple prediction based on social media usage.</div>
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="age">Age</label>
+                <input type="number" id="age" name="age" min="10" max="100" required placeholder="Ex: 22">
+            </div>
+
+            <div class="form-group">
+                <label for="platform">Most Used Platform</label>
+                <select id="platform" name="platform" required>
+                    <option value="" disabled selected>Choose your primary platform</option>
+                    <option value="Instagram">Instagram</option>
+                    <option value="TikTok">TikTok</option>
+                    <option value="YouTube">YouTube</option>
+                    <option value="Snapchat">Snapchat</option>
+                    <option value="Facebook">Facebook</option>
+                    <option value="Twitter">Twitter</option>
+                    <option value="Reddit">Reddit</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="usage">Avg Daily Usage (Hours)</label>
+                <input type="number" id="usage" name="usage" min="0" max="24" step="0.5" required placeholder="Ex: 4.5">
+            </div>
+
+            <div class="form-group">
+                <label for="sleep">Sleep Hours Per Night</label>
+                <input type="number" id="sleep" name="sleep" min="0" max="24" step="0.5" required placeholder="Ex: 7.0">
+            </div>
+
+            <button type="submit">Predict Health Score</button>
+        </form>
+
+        <!-- Only show if there is a prediction available -->
+        {% if prediction is not none %}
+        <div class="result-box">
+            <h3>Estimated Score</h3>
+            <div class="score">{{ prediction }}</div>
+        </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>
