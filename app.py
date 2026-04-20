@@ -11,7 +11,8 @@ def index():
     if request.method == 'POST':
         # Safely try to load the model
         try:
-            with open('model.pkl', 'rb') as f:
+            model_path = os.path.join(os.path.dirname(__file__), 'model.pkl')
+            with open(model_path, 'rb') as f:
                 saved_data = pickle.load(f)
                 model = saved_data['model']
                 model_columns = saved_data['columns']
