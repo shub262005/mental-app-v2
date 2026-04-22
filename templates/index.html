@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mental Health Prediction Model</title>
-    <!-- Modern font suite from Google -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <meta name="description" content="Predict your mental health score based on social media usage habits and sleep patterns.">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Base and Reset styling */
         :root {
             --bg-color: #0f172a;
             --card-bg: #1e293b;
@@ -17,67 +16,61 @@
             --accent-hover: #4f46e5;
             --input-bg: #0f172a;
             --input-border: #334155;
-            --success-color: #10b981;
-            --success-bg: rgba(16, 185, 129, 0.1);
         }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            margin: 0;
-            padding: 0;
             background-color: var(--bg-color);
-            background-image: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 20%), 
-                              radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 20%);
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(99,102,241,0.15) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(16,185,129,0.1) 0%, transparent 20%);
             color: var(--text-main);
             font-family: 'Outfit', sans-serif;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             min-height: 100vh;
+            padding: 2rem 1rem;
         }
 
-        /* Container Card */
         .card {
             background-color: var(--card-bg);
             padding: 2.5rem;
             border-radius: 1.25rem;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3), 0 8px 10px -6px rgba(0,0,0,0.3);
             width: 100%;
-            max-width: 420px;
+            max-width: 440px;
             animation: formReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
         @keyframes formReveal {
             from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* Typography */
-        h1 {
+        .header { text-align: center; margin-bottom: 2rem; }
+
+        .header h1 {
             font-size: 1.75rem;
             font-weight: 700;
-            margin: 0 0 0.5rem 0;
-            text-align: center;
             letter-spacing: -0.025em;
+            margin-bottom: 0.4rem;
         }
 
-        .subtitle {
+        .header p {
             color: var(--text-secondary);
-            font-size: 0.95rem;
-            text-align: center;
-            margin-bottom: 2rem;
+            font-size: 0.9rem;
             font-weight: 300;
         }
 
-        /* Form Components */
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
+        .form-group { margin-bottom: 1.2rem; }
 
         label {
             display: block;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
+            margin-bottom: 0.4rem;
+            font-size: 0.875rem;
             color: var(--text-secondary);
             font-weight: 500;
         }
@@ -91,17 +84,17 @@
             color: var(--text-main);
             font-family: inherit;
             font-size: 1rem;
-            box-sizing: border-box;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
 
         input[type="number"]:focus, select:focus {
             outline: none;
             border-color: var(--accent);
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+            box-shadow: 0 0 0 4px rgba(99,102,241,0.2);
         }
 
-        /* Buttons */
+        select option { background-color: #1e293b; }
+
         button {
             width: 100%;
             padding: 1rem;
@@ -114,60 +107,129 @@
             font-weight: 600;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
-            margin-top: 1rem;
+            margin-top: 0.75rem;
         }
 
         button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 10px 15px -3px rgba(99,102,241,0.4);
         }
+        button:active { transform: translateY(0); }
 
-        button:active {
-            transform: translateY(0);
-        }
-
-        /* Results Display */
+        /* ── Result box ─────────────────────────────────────── */
         .result-box {
             margin-top: 2rem;
-            background-color: var(--success-bg);
-            border: 1px solid var(--success-color);
             padding: 1.5rem;
-            border-radius: 0.5rem;
-            text-align: center;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.03);
             animation: popIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         @keyframes popIn {
             from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
+            to   { opacity: 1; transform: scale(1); }
         }
 
-        .result-box h3 {
-            margin: 0 0 0.5rem 0;
-            font-size: 1rem;
-            color: var(--success-color);
+        .result-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 0.75rem;
         }
 
-        .result-box .score {
-            margin: 0;
-            font-size: 2.75rem;
+        .score-display {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .score-number {
+            font-size: 3.5rem;
             font-weight: 700;
             line-height: 1;
+        }
+
+        .score-range {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 0.5rem auto;
+            text-align: center;
+            display: block;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Progress bar */
+        .progress-track {
+            background: rgba(255,255,255,0.08);
+            border-radius: 9999px;
+            height: 8px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 0.8s cubic-bezier(0.16,1,0.3,1);
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.4rem;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        /* Scale hint */
+        .scale-hint {
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .error-box {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.4);
+            color: #fca5a5;
+            font-size: 0.9rem;
+            text-align: center;
         }
     </style>
 </head>
 <body>
 
     <div class="card">
-        <h1>Mental Health Predictor</h1>
-        <div class="subtitle">Enter your details and habits to get a simple prediction based on social media usage.</div>
+        <div class="header">
+            <h1>Mental Health Predictor</h1>
+            <p>Enter your habits to get a mental wellness score based on social media & sleep data.</p>
+        </div>
 
         <form method="POST">
             <div class="form-group">
                 <label for="age">Age</label>
-                <input type="number" id="age" name="age" min="10" max="100" required placeholder="Ex: 22">
+                <input type="number" id="age" name="age" min="10" max="100" required placeholder="e.g. 22">
             </div>
 
             <div class="form-group">
@@ -180,30 +242,56 @@
                     <option value="Snapchat">Snapchat</option>
                     <option value="Facebook">Facebook</option>
                     <option value="Twitter">Twitter</option>
-                    <option value="Reddit">Reddit</option>
-                    <option value="Other">Other</option>
+                    <option value="WhatsApp">WhatsApp</option>
+                    <option value="LinkedIn">LinkedIn</option>
+                    <option value="LINE">LINE</option>
+                    <option value="WeChat">WeChat</option>
+                    <option value="KakaoTalk">KakaoTalk</option>
+                    <option value="VKontakte">VKontakte</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="usage">Avg Daily Usage (Hours)</label>
-                <input type="number" id="usage" name="usage" min="0" max="24" step="0.5" required placeholder="Ex: 4.5">
+                <label for="usage">Avg Daily Social Media Usage (Hours)</label>
+                <input type="number" id="usage" name="usage" min="0" max="24" step="0.5" required placeholder="e.g. 4.5">
             </div>
 
             <div class="form-group">
                 <label for="sleep">Sleep Hours Per Night</label>
-                <input type="number" id="sleep" name="sleep" min="0" max="24" step="0.5" required placeholder="Ex: 7.0">
+                <input type="number" id="sleep" name="sleep" min="0" max="24" step="0.5" required placeholder="e.g. 7.0">
             </div>
 
-            <button type="submit">Predict Health Score</button>
+            <button type="submit">Predict Mental Health Score</button>
         </form>
 
-        <!-- Only show if there is a prediction available -->
-        {% if prediction is not none %}
-        <div class="result-box">
-            <h3>Estimated Score</h3>
-            <div class="score">{{ prediction }}</div>
-        </div>
+        {% if result %}
+            {% if result.error %}
+            <div class="error-box">{{ result.error }}</div>
+            {% else %}
+            <div class="result-box">
+                <div class="result-label">Mental Wellness Score</div>
+
+                <div class="score-display">
+                    <span class="score-number" style="color: {{ result.color }}">{{ result.score }}</span>
+                    <span class="score-range">/ 9.0</span>
+                </div>
+
+                <span class="status-badge" style="background:{{ result.color }}22; color:{{ result.color }}; border: 1px solid {{ result.color }}44">
+                    {{ result.label }}
+                </span>
+
+                <div class="progress-track">
+                    <div class="progress-fill" style="width: {{ result.pct }}%; background: {{ result.color }}"></div>
+                </div>
+                <div class="progress-labels">
+                    <span>Poor (4)</span>
+                    <span>{{ result.pct }}%</span>
+                    <span>Excellent (9)</span>
+                </div>
+
+                <div class="scale-hint">Higher score = better mental wellness</div>
+            </div>
+            {% endif %}
         {% endif %}
     </div>
 
