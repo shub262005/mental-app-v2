@@ -1,54 +1,55 @@
 from flask import Flask, render_template, request
-import pandas as pd
+import numpy as np
 import pickle
 import os
-import sklearn
-from sklearn.linear_model import LinearRegression
 
 app = Flask(__name__)
+
+# ── Load model ONCE at startup, not on every request ──────────────────────────
+_model_path = os.path.join(os.path.dirname(__file__), 'model.pkl')
+with open(_model_path, 'rb') as _f:
+    _saved = pickle.load(_f)
+    MODEL = _saved['model']
+    MODEL_COLUMNS = list(_saved['columns'])  # e.g. ['Age', 'Avg_Daily_Usage_Hours', ..., 'Most_Used_Platform_Instagram', ...]
+# ──────────────────────────────────────────────────────────────────────────────
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     prediction = None
     if request.method == 'POST':
-        # Safely try to load the model
         try:
-            model_path = os.path.join(os.path.dirname(__file__), 'model.pkl')
-            with open(model_path, 'rb') as f:
-                saved_data = pickle.load(f)
-                model = saved_data['model']
-                model_columns = saved_data['columns']
-        except FileNotFoundError:
-            return "Error: model.pkl not found. Please run train_model.py first."
-
-        try:
-            # Retrieve input data from the HTML form
-            age = float(request.form['age'])
+            age      = float(request.form['age'])
             platform = request.form['platform']
-            usage = float(request.form['usage'])
-            sleep = float(request.form['sleep'])
-            
-            # Structure the input exactly like our original features DataFrame
-            input_data = pd.DataFrame(
-                [[age, platform, usage, sleep]], 
-                columns=['Age', 'Most_Used_Platform', 'Avg_Daily_Usage_Hours', 'Sleep_Hours_Per_Night']
-            )
-            
-            # Convert categorical data directly via get_dummies
-            input_encoded = pd.get_dummies(input_data, columns=['Most_Used_Platform'])
-            
-            # Realign the input's dummy columns to match the actual training set's columns.
-            input_encoded = input_encoded.reindex(columns=model_columns, fill_value=0)
-            
-            # Make the numerical prediction and extract the resulting value
-            pred_value = model.predict(input_encoded)[0]
-            prediction = round(pred_value, 2)
+            usage    = float(request.form['usage'])
+            sleep    = float(request.form['sleep'])
+
+            # Build feature vector manually — replaces pandas.get_dummies()
+            # This removes the pandas runtime dependency (saves ~50 MB on Vercel)
+            input_vec = np.zeros(len(MODEL_COLUMNS), dtype=float)
+
+            # Fill numeric features
+            for col, val in [
+                ('Age', age),
+                ('Avg_Daily_Usage_Hours', usage),
+                ('Sleep_Hours_Per_Night', sleep),
+            ]:
+                if col in MODEL_COLUMNS:
+                    input_vec[MODEL_COLUMNS.index(col)] = val
+
+            # Fill one-hot encoded platform column
+            platform_col = f'Most_Used_Platform_{platform}'
+            if platform_col in MODEL_COLUMNS:
+                input_vec[MODEL_COLUMNS.index(platform_col)] = 1
+
+            pred_value = MODEL.predict([input_vec])[0]
+            prediction = round(float(pred_value), 2)
+
         except Exception as e:
             import traceback
-            prediction = f"ERROR: {str(e)} | Trace: {traceback.format_exc()}"
-        
+            prediction = f"ERROR: {str(e)} | {traceback.format_exc()}"
+
     return render_template('index.html', prediction=prediction)
 
+
 if __name__ == '__main__':
-    # Start the server locally
     app.run(debug=True)
