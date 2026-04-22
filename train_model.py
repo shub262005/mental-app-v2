@@ -1,5 +1,5 @@
 import pandas as pd
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_absolute_error
 import pickle
@@ -21,9 +21,8 @@ X_encoded = pd.get_dummies(X, columns=['Most_Used_Platform'])
 # 4. Train/test split to validate quality
 X_train, X_test, y_train, y_test = train_test_split(X_encoded, y, test_size=0.2, random_state=42)
 
-# 5. Train RandomForestRegressor — much better at capturing non-linear patterns
-#    (e.g., the compounding effect of both high usage AND low sleep)
-model = RandomForestRegressor(n_estimators=200, max_depth=10, random_state=42, n_jobs=-1)
+# 5. Train Linear Regression model
+model = LinearRegression()
 model.fit(X_train, y_train)
 
 # 6. Evaluate
