@@ -29,7 +29,7 @@ model.fit(X_encoded, y)
 with open('model.pkl', 'wb') as f:
     pickle.dump({
         'model': model,
-        'columns': X_encoded.columns
+        'columns': list(X_encoded.columns)  # plain list — no pandas needed to unpickle
     }, f)
 
 print("Training finished! Model and dummy columns saved to model.pkl successfully.")
