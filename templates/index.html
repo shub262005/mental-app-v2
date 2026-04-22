@@ -1,90 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mental Health Prediction Model</title>
-    <meta name="description" content="Predict your mental health score based on social media usage habits and sleep patterns.">
+    <meta name="description"
+        content="Predict your mental health score based on social media usage habits and sleep patterns.">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
 </head>
+
 <body>
 
+    <main class="container">
     <div class="card">
+
         <div class="header">
             <h1>Mental Health Predictor</h1>
             <p>Enter your habits to get a mental wellness score based on social media & sleep data.</p>
         </div>
 
-        <form method="POST">
+        <form method="POST" action="/">
+
             <div class="form-group">
                 <label for="age">Age</label>
-                <input type="number" id="age" name="age" min="10" max="100" required placeholder="e.g. 22">
+                <input type="number" id="age" name="age" min="10" max="100" required placeholder="e.g. 22"
+                    value="{{ request.form.get('age', '') }}">
             </div>
+
 
             <div class="form-group">
                 <label for="platform">Most Used Platform</label>
                 <select id="platform" name="platform" required>
-                    <option value="" disabled selected>Choose your primary platform</option>
-                    <option value="Instagram">Instagram</option>
-                    <option value="TikTok">TikTok</option>
-                    <option value="YouTube">YouTube</option>
-                    <option value="Snapchat">Snapchat</option>
-                    <option value="Facebook">Facebook</option>
-                    <option value="Twitter">Twitter</option>
-                    <option value="WhatsApp">WhatsApp</option>
-                    <option value="LinkedIn">LinkedIn</option>
-                    <option value="LINE">LINE</option>
-                    <option value="WeChat">WeChat</option>
-                    <option value="KakaoTalk">KakaoTalk</option>
-                    <option value="VKontakte">VKontakte</option>
+                    <option value="" disabled {{ 'selected' if not request.form.get('platform') }}>Choose your primary platform</option>
+                    <option value="Instagram" {{ 'selected' if request.form.get('platform') == 'Instagram' }}>Instagram</option>
+                    <option value="TikTok" {{ 'selected' if request.form.get('platform') == 'TikTok' }}>TikTok</option>
+                    <option value="YouTube" {{ 'selected' if request.form.get('platform') == 'YouTube' }}>YouTube</option>
+                    <option value="Snapchat" {{ 'selected' if request.form.get('platform') == 'Snapchat' }}>Snapchat</option>
+                    <option value="Facebook" {{ 'selected' if request.form.get('platform') == 'Facebook' }}>Facebook</option>
+                    <option value="Twitter" {{ 'selected' if request.form.get('platform') == 'Twitter' }}>Twitter</option>
+                    <option value="WhatsApp" {{ 'selected' if request.form.get('platform') == 'WhatsApp' }}>WhatsApp</option>
+                    <option value="LinkedIn" {{ 'selected' if request.form.get('platform') == 'LinkedIn' }}>LinkedIn</option>
+                    <option value="LINE" {{ 'selected' if request.form.get('platform') == 'LINE' }}>LINE</option>
+                    <option value="WeChat" {{ 'selected' if request.form.get('platform') == 'WeChat' }}>WeChat</option>
+                    <option value="KakaoTalk" {{ 'selected' if request.form.get('platform') == 'KakaoTalk' }}>KakaoTalk</option>
+                    <option value="VKontakte" {{ 'selected' if request.form.get('platform') == 'VKontakte' }}>VKontakte</option>
                 </select>
             </div>
 
+
             <div class="form-group">
                 <label for="usage">Avg Daily Social Media Usage (Hours)</label>
-                <input type="number" id="usage" name="usage" min="0" max="24" step="0.5" required placeholder="e.g. 4.5">
+                <input type="number" id="usage" name="usage" min="0" max="24" step="0.1" required
+                    placeholder="e.g. 4.5" value="{{ request.form.get('usage', '') }}">
             </div>
+
 
             <div class="form-group">
                 <label for="sleep">Sleep Hours Per Night</label>
-                <input type="number" id="sleep" name="sleep" min="0" max="24" step="0.5" required placeholder="e.g. 7.0">
+                <input type="number" id="sleep" name="sleep" min="0" max="24" step="0.1" required
+                    placeholder="e.g. 7.0" value="{{ request.form.get('sleep', '') }}">
             </div>
+
 
             <button type="submit">Predict Mental Health Score</button>
         </form>
 
         {% if result %}
-            {% if result.error %}
-            <div class="error-box">{{ result.error }}</div>
-            {% else %}
-            <div class="result-box">
-                <div class="result-label">Mental Wellness Score</div>
+        {% if result.error %}
+        <div class="error-box">{{ result.error }}</div>
+        {% else %}
+        <div class="result-box">
+            <div class="result-label">Mental Wellness Score</div>
 
-                <div class="score-display">
-                    <span class="score-number" style="color: {{ result.color }}">{{ result.score }}</span>
-                    <span class="score-range">/ 9.0</span>
-                </div>
-
-                <span class="status-badge" style="background:{{ result.color }}22; color:{{ result.color }}; border: 1px solid {{ result.color }}44">
-                    {{ result.label }}
-                </span>
-
-                <div class="progress-track">
-                    <div class="progress-fill" style="width: {{ result.pct }}%; background: {{ result.color }}"></div>
-                </div>
-                <div class="progress-labels">
-                    <span>Poor (4)</span>
-                    <span>{{ result.pct }}%</span>
-                    <span>Excellent (9)</span>
-                </div>
-
-                <div class="scale-hint">Higher score = better mental wellness</div>
+            <div class="score-display">
+                <span class="score-number" style="color: {{ result.color }}">{{ result.score }}</span>
+                <span class="score-range">/ 9.0</span>
             </div>
-            {% endif %}
+
+            <span class="status-badge"
+                style="background:{{ result.color }}22; color:{{ result.color }}; border: 1px solid {{ result.color }}44">
+                {{ result.label }}
+            </span>
+
+            <div class="progress-track">
+                <div class="progress-fill" style="width: {{ result.pct }}%; background: {{ result.color }}"></div>
+            </div>
+            <div class="progress-labels">
+                <span>Poor (4)</span>
+                <span>{{ result.pct }}%</span>
+                <span>Excellent (9)</span>
+            </div>
+
+            <div class="scale-hint">Higher score = better mental wellness</div>
+        </div>
+        {% endif %}
         {% endif %}
     </div>
-
+    </main>
 </body>
+
+
 </html>

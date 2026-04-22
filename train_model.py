@@ -1,7 +1,6 @@
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import r2_score, mean_absolute_error
 import pickle
 
 # 1. Load dataset
@@ -18,38 +17,20 @@ y = df[target]
 # 3. One-hot encode the platform column
 X_encoded = pd.get_dummies(X, columns=['Most_Used_Platform'])
 
-# 4. Train/test split to validate quality
+# 4. Train/test split
 X_train, X_test, y_train, y_test = train_test_split(X_encoded, y, test_size=0.2, random_state=42)
 
 # 5. Train Linear Regression model
 model = LinearRegression()
 model.fit(X_train, y_train)
 
-# 6. Evaluate
-preds = model.predict(X_test)
-print(f"R2 Score:  {r2_score(y_test, preds):.4f}")
-print(f"MAE:       {mean_absolute_error(y_test, preds):.4f}")
-
-# 7. Quick sanity check
-print("\n--- BAD habits: 9h usage, 4h sleep, Instagram, age 20 ---")
-bad = pd.DataFrame([[20, 'Instagram', 9.0, 4.0]], columns=features)
-bad_enc = pd.get_dummies(bad, columns=['Most_Used_Platform'])
-bad_enc = bad_enc.reindex(columns=X_encoded.columns, fill_value=0)
-print(f"Predicted: {model.predict(bad_enc)[0]:.2f}  (range 4–9, lower = worse)")
-
-print("\n--- GOOD habits: 1h usage, 8h sleep, LinkedIn, age 22 ---")
-good = pd.DataFrame([[22, 'LinkedIn', 1.0, 8.0]], columns=features)
-good_enc = pd.get_dummies(good, columns=['Most_Used_Platform'])
-good_enc = good_enc.reindex(columns=X_encoded.columns, fill_value=0)
-print(f"Predicted: {model.predict(good_enc)[0]:.2f}")
-
-# 8. Save — columns as plain Python list (no pandas dependency for unpickling)
+# 6. Save model and feature columns
 with open('model.pkl', 'wb') as f:
     pickle.dump({
         'model': model,
-        'columns': list(X_encoded.columns),  # plain list — no pandas needed to unpickle
+        'columns': list(X_encoded.columns),
         'score_min': 4.0,
         'score_max': 9.0,
     }, f)
 
-print("\nTraining finished! Model saved to model.pkl.")
+print("Training finished! Model saved to model.pkl.")

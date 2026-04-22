@@ -26,7 +26,7 @@ except Exception as _e:
 # ──────────────────────────────────────────────────────────────────────────────
 
 def score_to_label(score):
-    """Convert a raw score (4–9) to a percentage and label."""
+    """Convert a raw score (4-9) to a percentage and label."""
     pct = round((score - SCORE_MIN) / (SCORE_MAX - SCORE_MIN) * 100, 1)
     pct = max(0, min(100, pct))  # clamp to 0–100
     if pct >= 75:
